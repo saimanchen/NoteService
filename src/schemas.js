@@ -34,3 +34,23 @@ export const GetNotesSchema = {
     }
   }
 }
+
+export const DeleteNoteSchema = {
+  body: {
+    type: "object", // definiera själv
+    required: ["title"], // definiera själv
+    properties: {
+      title: { description: "Title of the note to remove", type: "string" }
+    } // definiera själv
+  },
+  response: {
+    201: {
+      description: "Delete status",
+      type: "object",
+      properties: {
+        success: { type: "boolean" },
+        message: { type: "string" }
+      }
+    }
+  }
+}

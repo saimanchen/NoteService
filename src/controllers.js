@@ -10,7 +10,7 @@ export async function AddNoteController(req, res) {
 
   } catch (error) {
     req.log.error(error)
-    await res.status(500).send("An error occurred!")
+    await res.status(500).send("Error occurred when adding a note!")
   }
 }
 
@@ -22,6 +22,26 @@ export async function GetNotesController(req, res) {
     return notes
   } catch {
     req.log.error(error)
-    await res.status(500).send("Error when fetching notes")
+    await res.status(500).send("Error occurred when fetching notes!")
+  }
+}
+
+export async function DeleteNoteController(req, res) {
+  try {
+    const { Note } = req.db.models
+    const { deletedCount } = await Note.deleteOne({ title: req.body.title })
+
+    console.log(deletedCount)
+    
+    if(deletedCount === 0) {
+      res.code(404)
+      return { success: false, message: "Note could not be found!" }
+    }
+
+    res.code(201)
+    return { success: true, message: "Note was successfully deleted!" }
+  } catch (error) {
+    req.log.error(error)
+    await res.status(500).send("An error occurred!")
   }
 }
