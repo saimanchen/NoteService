@@ -18,3 +18,19 @@ export const AddNoteSchema = {
     }
   }
 }
+
+export const GetNotesSchema = {
+  response: {
+    201: {
+      description: "List of all notes",
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          title: { description: "Title of the note", type: "string" },
+          content: { description: "Content of the note", type: "string" }
+        }
+      }
+    }
+  }
+}
