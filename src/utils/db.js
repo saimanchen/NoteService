@@ -1,18 +1,18 @@
 import mongoose from "mongoose"
 import fp from "fastify-plugin"
 import Note from "../model/Note.js"
+import environment from './environment.js'
 
 async function database(server, options) {
   try {
-    mongoose.connection.on("connected", () => {
-      server.log.info({ actor: "MongoDB" }, "Connected!")
-    })
-    
-    mongoose.connection.on("disconnected", () => {
-      server.log.info({ actor: "MongoDB" }, "Disconnected!")
-    })
+    mongoose.connect(environment.DB_URL)
 
-    await mongoose.connect("mongodb+srv://saimanchen:MvpHP21fMbsODhKf@cluster0.bzp3cg8.mongodb.net/?retryWrites=true&w=majority")
+    const cxn = mongoose.connection
+
+    cxn
+    .on("connected", () => server.log.info({ actor: "MongoDB" }, "Connected!"))
+    .on("disconnected", () => server.log.info({ actor: "MongoDB" }, "Disconnected!"))
+    .on("error", (error) => server.log.info({ actor: MongoDB }, `Error occured: ${error}`))
 
     const models = { Note }
 

@@ -18,7 +18,8 @@ dotenv.config({ path: envPath })
 const environment = {
   NODE_ENV,
   MESSAGE: process.env.MESSAGE || "No Message",
-  PORT: Number(process.env.PORT) || 8080
+  PORT: Number(process.env.PORT) || 8080,
+  DB_URL: process.env.DB_URL
 }
 
 export default environment
