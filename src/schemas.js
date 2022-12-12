@@ -100,3 +100,23 @@ export const GetNotesCategorySchema = {
     }
   }
 }
+
+export const DeleteNotesCategorySchema = {
+  body: {
+    type: "object", // definiera själv
+    required: ["category"], // definiera själv
+    properties: {
+      category: { description: "category of the notes to remove", type: "number" }
+    } // definiera själv
+  },
+  response: {
+    201: {
+      description: "Delete status",
+      type: "object",
+      properties: {
+        success: { type: "boolean" },
+        message: { type: "string" }
+      }
+    }
+  }
+}

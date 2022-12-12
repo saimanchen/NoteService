@@ -75,3 +75,22 @@ export async function GetNotesCategoryController(req, res) {
     await res.status(500).send("Error occurred when fetching notes!")
   }
 }
+
+export async function DeleteNotesCategoryController(req, res) {
+  try {
+    const { Note } = req.db.models
+    const category = req.body.category
+    const { deletedCount } = await Note.deleteMany({ category: category })
+
+    if(deletedCount === 0) {
+      res.code(404)
+      return { success: false, message: `There are no notes with the category '${category}' to delete!`}
+    }
+
+    res.code(201)
+    return { success: true, message: `All notes with the category '${category}' were deleted!`}
+  } catch {
+    req.log.error(error)
+    await res.status(500).send("Error occurred when deleting all notes!")
+  }
+}
