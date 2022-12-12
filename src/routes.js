@@ -2,7 +2,7 @@ import * as controllers from './controllers.js'
 import * as schemas from './schemas.js'
 
 export async function NoteRoutes(server, options) {
-  // endpoint: /notes
+  // ENDPOINT: /notes
   server.route({
     method: "GET",
     url: "/notes",
@@ -11,13 +11,14 @@ export async function NoteRoutes(server, options) {
   })
 
   server.route({
-    method: "POST",
+    method: "DELETE",
     url: "/notes",
     schema: schemas.DeleteAllNotesSchema,
     handler: controllers.DeleteAllNotesController
   })
 
-  // endpoint: /note
+
+  // ENDPOINT: /note
   server.route({
     method: "POST",
     url: "/note",

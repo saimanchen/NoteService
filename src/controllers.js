@@ -47,7 +47,7 @@ export async function AddNoteController(req, res) {
 export async function DeleteNoteController(req, res) {
   try {
     const { Note } = req.db.models
-    const { deletedCount } = await Note.deleteOne({ title: req.body.title })
+    const { deletedCount } = await Note.deleteOne({ _id: req.body._id })
 
     console.log(deletedCount)
     
@@ -63,3 +63,23 @@ export async function DeleteNoteController(req, res) {
     await res.status(500).send("An error occurred!")
   }
 }
+
+// export async function DeleteNoteController(req, res) {
+//   try {
+//     const { Note } = req.db.models
+//     const { deletedCount } = await Note.deleteOne({ title: req.body.title })
+
+//     console.log(deletedCount)
+    
+//     if(deletedCount === 0) {
+//       res.code(404)
+//       return { success: false, message: "Note could not be found!" }
+//     }
+
+//     res.code(201)
+//     return { success: true, message: "Note was successfully deleted!" }
+//   } catch (error) {
+//     req.log.error(error)
+//     await res.status(500).send("An error occurred!")
+//   }
+// }

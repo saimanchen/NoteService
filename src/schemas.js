@@ -53,9 +53,9 @@ export const AddNoteSchema = {
 export const DeleteNoteSchema = {
   body: {
     type: "object", // definiera själv
-    required: ["title"], // definiera själv
+    required: ["_id"], // definiera själv
     properties: {
-      title: { description: "Title of the note to remove", type: "string" }
+      _id: { description: "id of the note to remove", type: "string" }
     } // definiera själv
   },
   response: {
