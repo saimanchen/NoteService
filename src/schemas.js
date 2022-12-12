@@ -1,9 +1,10 @@
 export const AddNoteSchema = {
   body: {
     type: "object",
-    required: ["title", "content"],
+    required: ["title", "shortDescription", "content"],
     properties: {
       title: { description: "Title of the note", type: "string" },
+      shortDescription: { description: "Short description of the note", type: "string" },
       content: { description: "Content of the note", type: "string" }
     }
   },
