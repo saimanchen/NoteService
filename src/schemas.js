@@ -1,13 +1,20 @@
-export const AddNoteSchema = {
-  body: {
-    type: "object",
-    required: ["title", "shortDescription", "content"],
-    properties: {
-      title: { description: "Title of the note", type: "string" },
-      shortDescription: { description: "Short description of the note", type: "string" },
-      content: { description: "Content of the note", type: "string" }
+export const GetNotesSchema = {
+  response: {
+    201: {
+      description: "List of all notes",
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          title: { description: "Title of the note", type: "string" },
+          content: { description: "Content of the note", type: "string" }
+        }
+      }
     }
-  },
+  }
+}
+
+export const DeleteAllNotesSchema = {
   response: {
     201: {
       description: "Successful response",
@@ -20,17 +27,24 @@ export const AddNoteSchema = {
   }
 }
 
-export const GetNotesSchema = {
+export const AddNoteSchema = {
+  body: {
+    type: "object",
+    required: ["title", "shortDescription", "content", "category"],
+    properties: {
+      title: { description: "Title of the note", type: "string" },
+      shortDescription: { description: "Short description of the note", type: "string" },
+      content: { description: "Content of the note", type: "string" },
+      category: { description: "Category of the note", type: "number" }
+    }
+  },
   response: {
     201: {
-      description: "List of all notes",
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          title: { description: "Title of the note", type: "string" },
-          content: { description: "Content of the note", type: "string" }
-        }
+      description: "Successful response",
+      type: "object",
+      properties: {
+        success: { type: "boolean" },
+        message: { type: "string" }
       }
     }
   }

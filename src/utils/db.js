@@ -7,12 +7,10 @@ async function database(server, options) {
   try {
     mongoose.connect(environment.DB_URL)
 
-    const cxn = mongoose.connection
-
-    cxn
+    mongoose.connection
     .on("connected", () => server.log.info({ actor: "MongoDB" }, "Connected!"))
     .on("disconnected", () => server.log.info({ actor: "MongoDB" }, "Disconnected!"))
-    .on("error", (error) => server.log.info({ actor: MongoDB }, `Error occured: ${error}`))
+    .on("error", (error) => server.log.info({ actor: MongoDB }, `Error occurred: ${error}`))
 
     const models = { Note }
 
