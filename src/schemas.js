@@ -56,11 +56,11 @@ export const AddNoteSchema = {
 
 export const DeleteNoteSchema = {
   body: {
-    type: "object", // definiera själv
-    required: ["_id"], // definiera själv
+    type: "object", 
+    required: ["_id"], 
     properties: {
       _id: { description: "id of the note to remove", type: "string" }
-    } // definiera själv
+    } 
   },
   response: {
     201: {
@@ -103,15 +103,39 @@ export const GetNotesCategorySchema = {
 
 export const DeleteNotesCategorySchema = {
   body: {
-    type: "object", // definiera själv
-    required: ["category"], // definiera själv
+    type: "object", 
+    required: ["category"], 
     properties: {
       category: { description: "category of the notes to remove", type: "number" }
-    } // definiera själv
+    } 
   },
   response: {
     201: {
       description: "Delete status",
+      type: "object",
+      properties: {
+        success: { type: "boolean" },
+        message: { type: "string" }
+      }
+    }
+  }
+}
+
+export const UpdateNoteSchema = {
+  body: {
+    type: "object", 
+    required: ["_id"], 
+    properties: {
+      _id: { description: "id of the note to update", type: "string" },
+      title: { description: "title of the note to update", type: "string" },
+      shortDescription: { description: "short description of the note to update", type: "string" },
+      content: { description: "content of the note to update", type: "string" },
+      category: { description: "category of the note to update", type: "number" },
+    }
+  },
+  response: {
+    201: {
+      description: "Update status",
       type: "object",
       properties: {
         success: { type: "boolean" },

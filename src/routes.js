@@ -47,4 +47,12 @@ export async function NoteRoutes(server, options) {
     schema: schemas.DeleteNotesCategorySchema,
     handler: controllers.DeleteNotesCategoryController
   })
+
+  // ENDPOINT: /update
+  server.route({
+    method: "PUT",
+    url: "/update",
+    schema: schemas.UpdateNoteSchema,
+    handler: controllers.UpdateNoteController
+  })
 }

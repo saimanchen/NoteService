@@ -94,3 +94,25 @@ export async function DeleteNotesCategoryController(req, res) {
     await res.status(500).send("Error occurred when deleting all notes!")
   }
 }
+
+export async function UpdateNoteController(req, res) {
+  try {
+    const { Note } = req.db.models
+    const id = req.body._id
+    
+    await Note.updateOne({ _id: id }, 
+      {
+        title: req.body.title,
+        shortDescription: req.body.shortDescription,
+        content: req.body.content,
+        category: req.body.category
+      }
+    )
+
+    res.code(201)
+    return { success: true, message: `The note with the id '${id}' was updated!`}
+  } catch {
+    req.log.error(error)
+    await res.status(500).send("Error occurred when deleting all notes!")
+  }
+}
