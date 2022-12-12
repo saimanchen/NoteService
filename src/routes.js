@@ -32,4 +32,11 @@ export async function NoteRoutes(server, options) {
     schema: schemas.DeleteNoteSchema,
     handler: controllers.DeleteNoteController
   })
+
+  server.route({
+    method: "PUT",
+    url: "/category",
+    schema: schemas.GetNotesCategorySchema,
+    handler: controllers.GetNotesCategoryController
+  })
 }

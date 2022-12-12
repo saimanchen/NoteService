@@ -64,22 +64,14 @@ export async function DeleteNoteController(req, res) {
   }
 }
 
-// export async function DeleteNoteController(req, res) {
-//   try {
-//     const { Note } = req.db.models
-//     const { deletedCount } = await Note.deleteOne({ title: req.body.title })
+export async function GetNotesCategoryController(req, res) {
+  try {
+    const { Note } = req.db.models
+    const notes = await Note.find({ category: req.body.category })
 
-//     console.log(deletedCount)
-    
-//     if(deletedCount === 0) {
-//       res.code(404)
-//       return { success: false, message: "Note could not be found!" }
-//     }
-
-//     res.code(201)
-//     return { success: true, message: "Note was successfully deleted!" }
-//   } catch (error) {
-//     req.log.error(error)
-//     await res.status(500).send("An error occurred!")
-//   }
-// }
+    return notes
+  } catch {
+    req.log.error(error)
+    await res.status(500).send("Error occurred when fetching notes!")
+  }
+}

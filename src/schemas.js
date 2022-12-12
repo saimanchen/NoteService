@@ -7,6 +7,10 @@ export const GetNotesSchema = {
         type: "object",
         properties: {
           title: { description: "Title of the note", type: "string" },
+          shortDescription: { 
+            description: "Short description of the note", 
+            type: "string" 
+          },
           content: { description: "Content of the note", type: "string" }
         }
       }
@@ -65,6 +69,33 @@ export const DeleteNoteSchema = {
       properties: {
         success: { type: "boolean" },
         message: { type: "string" }
+      }
+    }
+  }
+}
+
+export const GetNotesCategorySchema = {
+  body: {
+    type: "object",
+    required: ["category"],
+    properties: {
+      category: { description: "category of the notes to retrieve", type: "number" }
+    }
+  },
+  response: {
+    201: {
+      description: "List of notes retrieved by category",
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          title: { description: "Title of the note", type: "string" },
+          shortDescription: { 
+            description: "Short description of the note", 
+            type: "string" 
+          },
+          content: { description: "Content of the note", type: "string" }
+        }
       }
     }
   }
