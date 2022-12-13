@@ -11,6 +11,14 @@ export async function Routes(server, options) {
     handler: controllers.RegisterController
   })
 
+  // ENDPOINT: /login
+  server.route({
+    method: "POST",
+    url: "/login",
+    schema: schemas.LoginSchema,
+    handler: controllers.LoginController
+  })
+
   // ENDPOINT: /notes
   server.route({
     method: "GET",

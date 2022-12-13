@@ -23,7 +23,28 @@ export async function RegisterController(req, res) {
 
   } catch (error) {
     req.log.error(error)
-    await res.status(500).send("An error occurred")
+    await res.status(500).send("Error occurred when registering a new user")
+  }
+}
+
+export async function LoginController(req, res) {
+  try {
+    const { User } = req.db.models
+
+    const user = await User.findOne({
+      email: req.body.email, 
+      password: req.body.password
+   }).exec()
+
+    if (!user) {
+      res.status(404).send("No user exists with this e-mail address")
+    }
+
+    res.status(201).send({ success: true, message: "Logged in!" })
+
+  } catch (error) {
+    req.log.error(error)
+    await res.status(500).send("Error occurred when logging in!")
   }
 }
 
