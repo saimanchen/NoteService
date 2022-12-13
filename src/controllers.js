@@ -1,3 +1,22 @@
+export async function RegisterController(req, res) {
+  try {
+    const { User } = req.db.models
+
+    const existsUser =  await User.findOne({ email: req.body.email })
+
+    if (existsUser) {
+      res.status(409).send({ success: false, message: "E-mail address is already in use!" })
+    }
+
+    const newUser = await User.create(req.body)
+    res.status(201).send({ success: true, message: `Registered new user with userID: ${newUser.id}` })
+
+  } catch (error) {
+    req.log.error(error)
+    await res.status(500).send("An error occurred")
+  }
+}
+
 export async function GetNotesController(req, res) {
   try {
     const { Note } = req.db.models

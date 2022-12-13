@@ -1,3 +1,26 @@
+export const RegisterSchema = {
+  body: {
+    type: "object",
+    required: ["firstname", "lastname", "email", "password"],
+    properties: {
+      firstname: { description: "Firstname of the user", type: "string" },
+      lastname: { description: "Lastname of the user", type: "string" },
+      email: { description: "E-mail of the user", type: "string" },
+      password: { description: "Password of the user", type: "string" }
+    }
+  },
+  response: {
+    201: {
+      description: "Successful response!",
+      type: "object",
+      properties: {
+        success: { type: "boolean" },
+        message: { type: "string" }
+      }
+    }
+  }
+}
+
 export const GetNotesSchema = {
   response: {
     201: {

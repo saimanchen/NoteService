@@ -2,6 +2,15 @@ import * as controllers from './controllers.js'
 import * as schemas from './schemas.js'
 
 export async function Routes(server, options) {
+
+  // ENDPOINT: /register
+  server.route({
+    method: "POST",
+    url: "/register",
+    schema: schemas.RegisterSchema,
+    handler: controllers.RegisterController
+  })
+
   // ENDPOINT: /notes
   server.route({
     method: "GET",
