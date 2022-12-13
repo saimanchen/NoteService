@@ -1,5 +1,15 @@
+import validateEmail from "./utils/validateEmail.js"
+
 export async function RegisterController(req, res) {
   try {
+
+    const isEmailValid = validateEmail(req.body.email)
+
+    if (!isEmailValid) {
+      res.status(400).send("Invalid e-mail format")
+      return 
+    }
+
     const { User } = req.db.models
 
     const existsUser =  await User.findOne({ email: req.body.email })
