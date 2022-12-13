@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import fp from "fastify-plugin"
 import Note from "../model/Note.js"
+import User from "../model/User.js"
 import environment from './environment.js'
 
 async function database(server, options) {
@@ -12,7 +13,7 @@ async function database(server, options) {
     .on("disconnected", () => server.log.info({ actor: "MongoDB" }, "Disconnected!"))
     .on("error", (error) => server.log.info({ actor: MongoDB }, `Error occurred: ${error}`))
 
-    const models = { Note }
+    const models = { Note, User }
 
     server.addHook("onRequest", async (req, res) => {
       req.db = { models }

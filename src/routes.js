@@ -1,7 +1,7 @@
 import * as controllers from './controllers.js'
 import * as schemas from './schemas.js'
 
-export async function NoteRoutes(server, options) {
+export async function Routes(server, options) {
   // ENDPOINT: /notes
   server.route({
     method: "GET",
