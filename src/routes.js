@@ -38,29 +38,30 @@ export async function Routes(server, options) {
   // ENDPOINT: /note
   server.route({
     method: "POST",
-    url: "/note",
+    url: "/notes",
+    preHandler: [server.authenticate],
     schema: schemas.AddNoteSchema,
     handler: controllers.AddNoteController
   })
 
   server.route({
     method: "DELETE",
-    url: "/note",
+    url: "/notes/:id",
     schema: schemas.DeleteNoteSchema,
     handler: controllers.DeleteNoteController
   })
 
   // ENDPOINT: /category
   server.route({
-    method: "PUT",
-    url: "/category",
+    method: "GET",
+    url: "/notes/:category",
     schema: schemas.GetNotesCategorySchema,
     handler: controllers.GetNotesCategoryController
   })
 
   server.route({
     method: "DELETE",
-    url: "/category",
+    url: "/notes/:category/del",
     schema: schemas.DeleteNotesCategorySchema,
     handler: controllers.DeleteNotesCategoryController
   })

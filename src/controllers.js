@@ -40,8 +40,17 @@ export async function LoginController(req, res) {
       res.status(404).send("No user exists with this e-mail address")
     }
 
-    res.status(201).send({ success: true, message: "Logged in!" })
+    if(user != null) {
+      const jwtToken = await res.jwtSign({
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        userID: user.id
+      }, { expiresIn: "15m" })
 
+      const responseData = { token: jwtToken }
+      res.status(201).send({ success: true, message: responseData })
+    }
   } catch (error) {
     req.log.error(error)
     await res.status(500).send("Error occurred when logging in!")
@@ -97,7 +106,7 @@ export async function AddNoteController(req, res) {
 export async function DeleteNoteController(req, res) {
   try {
     const { Note } = req.db.models
-    const { deletedCount } = await Note.deleteOne({ _id: req.body._id })
+    const { deletedCount } = await Note.deleteOne({ _id: req.params.id })
 
     console.log(deletedCount)
     
@@ -117,7 +126,7 @@ export async function DeleteNoteController(req, res) {
 export async function GetNotesCategoryController(req, res) {
   try {
     const { Note } = req.db.models
-    const notes = await Note.find({ category: req.body.category })
+    const notes = await Note.find({ category: req.params.category })
 
     return notes
   } catch {
@@ -129,7 +138,7 @@ export async function GetNotesCategoryController(req, res) {
 export async function DeleteNotesCategoryController(req, res) {
   try {
     const { Note } = req.db.models
-    const category = req.body.category
+    const category = req.params.category
     const { deletedCount } = await Note.deleteMany({ category: category })
 
     if(deletedCount === 0) {

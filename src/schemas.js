@@ -36,7 +36,12 @@ export const LoginSchema = {
       type: "object",
       properties: {
         success: { type: "boolean" },
-        message: { type: "string" }
+        message: { 
+          type: "object",
+          properties: {
+            token: { type: "string" }
+          }
+        }
       }
     }
   }
@@ -99,12 +104,10 @@ export const AddNoteSchema = {
 }
 
 export const DeleteNoteSchema = {
-  body: {
-    type: "object", 
-    required: ["_id"], 
-    properties: {
-      _id: { description: "id of the note to remove", type: "string" }
-    } 
+  params: { 
+    type: 'object',
+    additionalProperties: false,
+    properties: { id: { type: 'string' } }
   },
   response: {
     201: {
@@ -119,12 +122,10 @@ export const DeleteNoteSchema = {
 }
 
 export const GetNotesCategorySchema = {
-  body: {
-    type: "object",
-    required: ["category"],
-    properties: {
-      category: { description: "category of the notes to retrieve", type: "number" }
-    }
+  params: { 
+    type: 'object',
+    additionalProperties: false,
+    properties: { category: { type: 'number' } }
   },
   response: {
     201: {
@@ -146,12 +147,10 @@ export const GetNotesCategorySchema = {
 }
 
 export const DeleteNotesCategorySchema = {
-  body: {
-    type: "object", 
-    required: ["category"], 
-    properties: {
-      category: { description: "category of the notes to remove", type: "number" }
-    } 
+  params: { 
+    type: 'object',
+    additionalProperties: false,
+    properties: { category: { type: 'number' } }
   },
   response: {
     201: {
