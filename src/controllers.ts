@@ -1,6 +1,11 @@
+import { FastifyReply, FastifyRequest } from "fastify"
 import validateEmail from "./utils/validateEmail.js"
+import { IRegisterRequest, ILoginRequest, IAddNoteRequest, IDeleteNoteRequest, IGetNotesCategoryRequest, IDeleteNotesCategoryRequest, IUpdateNoteRequest } from "./interfaces"
 
-export async function RegisterController(req, res) {
+export async function RegisterController(
+  req: FastifyRequest<{ Body: IRegisterRequest }>, 
+  res: FastifyReply
+) {
   try {
 
     const isEmailValid = validateEmail(req.body.email)
@@ -15,7 +20,7 @@ export async function RegisterController(req, res) {
     const existsUser =  await User.findOne({ email: req.body.email })
 
     if (existsUser) {
-      res.status(409).send({ success: false, message: "E-mail address is already in use!" })
+      res.status(400).send({ success: false, message: "E-mail address is already in use!" })
     }
 
     const newUser = await User.create(req.body)
@@ -27,49 +32,58 @@ export async function RegisterController(req, res) {
   }
 }
 
-export async function LoginController(req, res) {
-  try {
-    const { User } = req.db.models
+export async function LoginController(
+  req: FastifyRequest<{ Body: ILoginRequest }>,
+  res: FastifyReply
+) {
+    try {
+      const { User } = req.db.models
 
-    const user = await User.findOne({
-      email: req.body.email, 
-      password: req.body.password
-   }).exec()
+      const user = await User.findOne({
+        email: req.body.email, 
+        password: req.body.password
+    }).exec()
 
-    if (!user) {
-      res.status(404).send("No user exists with this e-mail address")
+      if (!user) {
+        res.status(404).send("No user exists with this e-mail address")
+      }
+
+      if(user != null) {
+        const jwtToken = await res.jwtSign({
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          userID: user.id
+        }, { expiresIn: "15m" })
+
+        const responseData = { token: jwtToken }
+        res.status(201).send({ success: true, message: responseData })
+      }
+    } catch (error) {
+      req.log.error(error)
+      await res.status(500).send("Error occurred when logging in!")
     }
-
-    if(user != null) {
-      const jwtToken = await res.jwtSign({
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email,
-        userID: user.id
-      }, { expiresIn: "15m" })
-
-      const responseData = { token: jwtToken }
-      res.status(201).send({ success: true, message: responseData })
-    }
-  } catch (error) {
-    req.log.error(error)
-    await res.status(500).send("Error occurred when logging in!")
-  }
 }
 
-export async function GetNotesController(req, res) {
+export async function GetNotesController(
+  req: FastifyRequest, 
+  res: FastifyReply
+) {
   try {
     const { Note } = req.db.models
     const notes = await Note.find({})
 
     return notes
-  } catch {
+  } catch (error) {
     req.log.error(error)
     await res.status(500).send("Error occurred when fetching notes!")
   }
 }
 
-export async function DeleteAllNotesController(req, res) {
+export async function DeleteAllNotesController(
+  req: FastifyRequest,
+  res: FastifyReply
+) {
   try {
     const { Note } = req.db.models
     const { deletedCount } = await Note.deleteMany({})
@@ -81,13 +95,16 @@ export async function DeleteAllNotesController(req, res) {
 
     res.code(201)
     return { success: true, message: "All notes were deleted!"}
-  } catch {
+  } catch (error){
     req.log.error(error)
     await res.status(500).send("Error occurred when deleting all notes!")
   }
 }
 
-export async function AddNoteController(req, res) {
+export async function AddNoteController(
+  req: FastifyRequest<{ Body: IAddNoteRequest }>, 
+  res: FastifyReply
+) {
   try {
     req.log.info("Request received!")
 
@@ -103,7 +120,10 @@ export async function AddNoteController(req, res) {
   }
 }
 
-export async function DeleteNoteController(req, res) {
+export async function DeleteNoteController(
+  req: FastifyRequest<{ Params: IDeleteNoteRequest }>, 
+  res: FastifyReply
+) {
   try {
     const { Note } = req.db.models
     const { deletedCount } = await Note.deleteOne({ _id: req.params.id })
@@ -123,19 +143,25 @@ export async function DeleteNoteController(req, res) {
   }
 }
 
-export async function GetNotesCategoryController(req, res) {
+export async function GetNotesCategoryController(
+  req: FastifyRequest<{ Params: IGetNotesCategoryRequest }>, 
+  res: FastifyReply
+) {
   try {
     const { Note } = req.db.models
     const notes = await Note.find({ category: req.params.category })
 
     return notes
-  } catch {
+  } catch (error) {
     req.log.error(error)
     await res.status(500).send("Error occurred when fetching notes!")
   }
 }
 
-export async function DeleteNotesCategoryController(req, res) {
+export async function DeleteNotesCategoryController(
+  req: FastifyRequest<{ Params: IDeleteNotesCategoryRequest }>, 
+  res: FastifyReply
+) {
   try {
     const { Note } = req.db.models
     const category = req.params.category
@@ -148,16 +174,19 @@ export async function DeleteNotesCategoryController(req, res) {
 
     res.code(201)
     return { success: true, message: `All notes with the category '${category}' were deleted!`}
-  } catch {
+  } catch (error) {
     req.log.error(error)
     await res.status(500).send("Error occurred when deleting all notes!")
   }
 }
 
-export async function UpdateNoteController(req, res) {
+export async function UpdateNoteController(
+  req: FastifyRequest<{ Body: IUpdateNoteRequest }>, 
+  res: FastifyReply
+) {
   try {
     const { Note } = req.db.models
-    const id = req.body._id
+    const id = req.body.id
     
     await Note.updateOne({ _id: id }, 
       {
@@ -170,7 +199,7 @@ export async function UpdateNoteController(req, res) {
 
     res.code(201)
     return { success: true, message: `The note with the id '${id}' was updated!`}
-  } catch {
+  } catch (error) {
     req.log.error(error)
     await res.status(500).send("Error occurred when deleting all notes!")
   }

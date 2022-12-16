@@ -1,7 +1,8 @@
-import * as controllers from './controllers.js'
-import * as schemas from './schemas.js'
+import { FastifyInstance, FastifyPluginOptions } from 'fastify'
+import * as controllers from './controllers'
+import * as schemas from './schemas'
 
-export async function Routes(server, options) {
+export async function Routes(server: FastifyInstance, options: FastifyPluginOptions) {
 
   // ENDPOINT: /register
   server.route({

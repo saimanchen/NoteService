@@ -167,9 +167,9 @@ export const DeleteNotesCategorySchema = {
 export const UpdateNoteSchema = {
   body: {
     type: "object", 
-    required: ["_id"], 
+    required: ["id"], 
     properties: {
-      _id: { description: "id of the note to update", type: "string" },
+      id: { description: "id of the note to update", type: "string" },
       title: { description: "title of the note to update", type: "string" },
       shortDescription: { description: "short description of the note to update", type: "string" },
       content: { description: "content of the note to update", type: "string" },
