@@ -24,6 +24,7 @@ export interface IDeleteNoteRequest {
 
 export interface IGetNotesCategoryRequest {
   category: number
+  userId: string
 }
 
 export interface IDeleteNotesCategoryRequest {

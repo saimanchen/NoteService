@@ -132,7 +132,10 @@ export const GetNotesCategorySchema = {
   params: { 
     type: 'object',
     additionalProperties: false,
-    properties: { category: { type: 'number' } }
+    properties: { 
+      category:  { type: "number" },
+      userId: { type: "string" }
+    }
   },
   response: {
     201: {

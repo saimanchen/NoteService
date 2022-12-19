@@ -82,7 +82,7 @@ function Routes(server, options) {
         // ENDPOINT: /category
         server.route({
             method: "GET",
-            url: "/notes/:category",
+            url: "/notes/:category/:userId",
             schema: schemas.GetNotesCategorySchema,
             handler: controllers.GetNotesCategoryController
         });

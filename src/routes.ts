@@ -56,7 +56,7 @@ export async function Routes(server: FastifyInstance, options: FastifyPluginOpti
   // ENDPOINT: /category
   server.route({
     method: "GET",
-    url: "/notes/:category",
+    url: "/notes/:category/:userId",
     schema: schemas.GetNotesCategorySchema,
     handler: controllers.GetNotesCategoryController
   })

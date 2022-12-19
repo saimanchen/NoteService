@@ -146,7 +146,10 @@ function GetNotesCategoryController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { Note } = req.db.models;
-            const notes = yield Note.find({ category: req.params.category });
+            const notes = yield Note.find({
+                category: req.params.category,
+                userId: req.params.userId
+            });
             return notes;
         }
         catch (error) {

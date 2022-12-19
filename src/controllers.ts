@@ -160,7 +160,10 @@ export async function GetNotesCategoryController(
 ) {
   try {
     const { Note } = req.db.models
-    const notes = await Note.find({ category: req.params.category })
+    const notes = await Note.find({ 
+      category: req.params.category, 
+      userId: req.params.userId 
+    })
 
     return notes
   } catch (error) {
