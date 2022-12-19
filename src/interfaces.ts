@@ -10,10 +10,12 @@ export interface IRegisterRequest {
 }
 
 export interface IAddNoteRequest {
+  _id: string
   title: string
   shortDescription: string
   content: string
   category: number
+  userId: string
 }
 
 export interface IDeleteNoteRequest {
@@ -49,4 +51,5 @@ export interface INote {
   shortDescription: string
   content: string
   category: number
+  userId: string
 }

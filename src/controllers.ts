@@ -53,7 +53,7 @@ export async function LoginController(
           firstname: user.firstname,
           lastname: user.lastname,
           email: user.email,
-          userID: user.id
+          userId: user.id
         }, { expiresIn: "15m" })
 
         const responseData = { token: jwtToken }
@@ -71,7 +71,7 @@ export async function GetNotesController(
 ) {
   try {
     const { Note } = req.db.models
-    const notes = await Note.find({})
+    const notes = await Note.find({ userId: req.user.userId }).exec()
 
     return notes
   } catch (error) {
@@ -108,11 +108,22 @@ export async function AddNoteController(
   try {
     req.log.info("Request received!")
 
-    const { Note } = req.db.models
+    const { Note, User } = req.db.models
+
+    const foundUser = await User.findOne({ _id: req.body.userId })
+
+    if (!foundUser) {
+      return await res.status(404).send("User not found!")
+    }
+
     const newNote = await Note.create(req.body)
+    
+    // appends noteId to the user's noteIds-array
+    foundUser.noteIds.push(newNote.id)
+    await foundUser.save()
 
     res.status(201)
-    return { success: true, message: `uploaded with id: ${newNote.id}` }
+    return { success: true, message: `uploaded with id: ${newNote.id} and appended it to the array` }
 
   } catch (error) {
     req.log.error(error)

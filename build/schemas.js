@@ -50,6 +50,11 @@ exports.LoginSchema = {
     }
 };
 exports.GetNotesSchema = {
+    params: {
+        type: 'object',
+        additionalProperties: false,
+        properties: { userId: { type: 'string' } }
+    },
     response: {
         201: {
             description: "List of all notes",
@@ -83,12 +88,13 @@ exports.DeleteAllNotesSchema = {
 exports.AddNoteSchema = {
     body: {
         type: "object",
-        required: ["title", "shortDescription", "content", "category"],
+        required: ["title", "shortDescription", "content", "category", "userId"],
         properties: {
             title: { description: "Title of the note", type: "string" },
             shortDescription: { description: "Short description of the note", type: "string" },
             content: { description: "Content of the note", type: "string" },
-            category: { description: "Category of the note", type: "number" }
+            category: { description: "Category of the note", type: "number" },
+            userId: { description: "ID of the user which the note belongs to", type: "string" }
         }
     },
     response: {

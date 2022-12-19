@@ -14,6 +14,20 @@ declare module 'fastify' {
   }
 }
 
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    user: {
+      "firstname": string,
+      "lastname": string,
+      "email": string,
+      "userId": string,
+      "iat": number,
+      "exp": number
+    }
+
+  }
+}
+
 const server: FastifyInstance = fastify({ logger: true })
 
 const start = async () => {

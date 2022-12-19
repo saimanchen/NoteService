@@ -55,6 +55,7 @@ function Routes(server, options) {
         server.route({
             method: "GET",
             url: "/notes",
+            preHandler: [server.authenticate],
             schema: schemas.GetNotesSchema,
             handler: controllers.GetNotesController
         });

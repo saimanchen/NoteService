@@ -24,6 +24,7 @@ export async function Routes(server: FastifyInstance, options: FastifyPluginOpti
   server.route({
     method: "GET",
     url: "/notes",
+    preHandler: [server.authenticate],
     schema: schemas.GetNotesSchema,
     handler: controllers.GetNotesController
   })

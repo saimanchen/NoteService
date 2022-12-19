@@ -28,8 +28,7 @@ function RegisterController(req, res) {
                 res.status(400).send({ success: false, message: "E-mail address is already in use!" });
             }
             const newUser = yield User.create(req.body);
-            // res.status(201).send({ success: true, message: `Registered new user with userID: ${newUser.id}` })
-            res.status(201).send({ success: true, message: `Registered new user: ${newUser}` });
+            res.status(201).send({ success: true, message: `Registered new user with userID: ${newUser.id}` });
         }
         catch (error) {
             req.log.error(error);
@@ -54,7 +53,7 @@ function LoginController(req, res) {
                     firstname: user.firstname,
                     lastname: user.lastname,
                     email: user.email,
-                    userID: user.id
+                    userId: user.id
                 }, { expiresIn: "15m" });
                 const responseData = { token: jwtToken };
                 res.status(201).send({ success: true, message: responseData });
@@ -71,7 +70,7 @@ function GetNotesController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { Note } = req.db.models;
-            const notes = yield Note.find({});
+            const notes = yield Note.find({ userId: req.user.userId }).exec();
             return notes;
         }
         catch (error) {
@@ -104,10 +103,17 @@ function AddNoteController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             req.log.info("Request received!");
-            const { Note } = req.db.models;
+            const { Note, User } = req.db.models;
+            const foundUser = yield User.findOne({ _id: req.body.userId });
+            if (!foundUser) {
+                return yield res.status(404).send("User not found!");
+            }
             const newNote = yield Note.create(req.body);
+            // appends noteId to the user's noteIds-array
+            foundUser.noteIds.push(newNote.id);
+            yield foundUser.save();
             res.status(201);
-            return { success: true, message: `uploaded with id: ${newNote.id}` };
+            return { success: true, message: `uploaded with id: ${newNote.id} and appended it to the array` };
         }
         catch (error) {
             req.log.error(error);
