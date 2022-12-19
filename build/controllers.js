@@ -28,7 +28,8 @@ function RegisterController(req, res) {
                 res.status(400).send({ success: false, message: "E-mail address is already in use!" });
             }
             const newUser = yield User.create(req.body);
-            res.status(201).send({ success: true, message: `Registered new user with userID: ${newUser.id}` });
+            // res.status(201).send({ success: true, message: `Registered new user with userID: ${newUser.id}` })
+            res.status(201).send({ success: true, message: `Registered new user: ${newUser}` });
         }
         catch (error) {
             req.log.error(error);

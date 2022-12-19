@@ -41,6 +41,7 @@ export interface IUser {
   lastname: string
   email: string
   password: string
+  noteIds: Array<string>
 }
 
 export interface INote {

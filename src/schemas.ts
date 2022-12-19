@@ -1,12 +1,13 @@
 export const RegisterSchema = {
   body: {
     type: "object",
-    required: ["firstname", "lastname", "email", "password"],
+    required: ["firstname", "lastname", "email", "password", "noteIds"],
     properties: {
       firstname: { description: "Firstname of the user", type: "string" },
       lastname: { description: "Lastname of the user", type: "string" },
       email: { description: "E-mail of the user", type: "string" },
-      password: { description: "Password of the user", type: "string" }
+      password: { description: "Password of the user", type: "string" },
+      noteIds: { description: "List of note IDs of the user", type: "array"}
     }
   },
   response: {
@@ -84,7 +85,7 @@ export const AddNoteSchema = {
   body: {
     type: "object",
     required: ["title", "shortDescription", "content", "category"],
-    properties: {
+    properties: { 
       title: { description: "Title of the note", type: "string" },
       shortDescription: { description: "Short description of the note", type: "string" },
       content: { description: "Content of the note", type: "string" },
