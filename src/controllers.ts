@@ -178,8 +178,12 @@ export async function DeleteNotesCategoryController(
 ) {
   try {
     const { Note } = req.db.models
-    const category = req.params.category
-    const { deletedCount } = await Note.deleteMany({ category: category })
+    const { category, userId } = req.params
+
+    const { deletedCount } = await Note.deleteMany({ 
+      category: category, 
+      userId: userId
+    })
 
     if(deletedCount === 0) {
       res.code(404)
@@ -200,9 +204,9 @@ export async function UpdateNoteController(
 ) {
   try {
     const { Note } = req.db.models
-    const id = req.body.id
-    
-    await Note.updateOne({ _id: id }, 
+    const { id, userId } = req.body
+
+    await Note.updateOne({ _id: id, userId: userId }, 
       {
         title: req.body.title,
         shortDescription: req.body.shortDescription,

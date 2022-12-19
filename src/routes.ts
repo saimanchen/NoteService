@@ -63,7 +63,7 @@ export async function Routes(server: FastifyInstance, options: FastifyPluginOpti
 
   server.route({
     method: "DELETE",
-    url: "/notes/:category/del",
+    url: "/notes/:category/:userId/del",
     schema: schemas.DeleteNotesCategorySchema,
     handler: controllers.DeleteNotesCategoryController
   })

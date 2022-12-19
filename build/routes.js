@@ -88,7 +88,7 @@ function Routes(server, options) {
         });
         server.route({
             method: "DELETE",
-            url: "/notes/:category/del",
+            url: "/notes/:category/:userId/del",
             schema: schemas.DeleteNotesCategorySchema,
             handler: controllers.DeleteNotesCategoryController
         });

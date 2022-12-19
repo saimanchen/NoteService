@@ -163,8 +163,11 @@ function DeleteNotesCategoryController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { Note } = req.db.models;
-            const category = req.params.category;
-            const { deletedCount } = yield Note.deleteMany({ category: category });
+            const { category, userId } = req.params;
+            const { deletedCount } = yield Note.deleteMany({
+                category: category,
+                userId: userId
+            });
             if (deletedCount === 0) {
                 res.code(404);
                 return { success: false, message: `There are no notes with the category '${category}' to delete!` };
@@ -183,8 +186,8 @@ function UpdateNoteController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { Note } = req.db.models;
-            const id = req.body.id;
-            yield Note.updateOne({ _id: id }, {
+            const { id, userId } = req.body;
+            yield Note.updateOne({ _id: id, userId: userId }, {
                 title: req.body.title,
                 shortDescription: req.body.shortDescription,
                 content: req.body.content,

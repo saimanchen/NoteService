@@ -149,7 +149,7 @@ export const GetNotesCategorySchema = {
             description: "Short description of the note", 
             type: "string" 
           },
-          content: { description: "Content of the note", type: "string" }
+          content: { description: "ID of the user which the note belongs to", type: "string" }
         }
       }
     }
@@ -160,7 +160,11 @@ export const DeleteNotesCategorySchema = {
   params: { 
     type: 'object',
     additionalProperties: false,
-    properties: { category: { type: 'number' } }
+    properties: { 
+      category: { type: 'number' },
+      userId: { type: 'string' }
+
+    }
   },
   response: {
     201: {
@@ -184,6 +188,7 @@ export const UpdateNoteSchema = {
       shortDescription: { description: "short description of the note to update", type: "string" },
       content: { description: "content of the note to update", type: "string" },
       category: { description: "category of the note to update", type: "number" },
+      userId: { description: ""}
     }
   },
   response: {

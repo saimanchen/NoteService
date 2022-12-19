@@ -29,6 +29,7 @@ export interface IGetNotesCategoryRequest {
 
 export interface IDeleteNotesCategoryRequest {
   category: number
+  userId: string
 }
 
 export interface IUpdateNoteRequest {
@@ -37,6 +38,7 @@ export interface IUpdateNoteRequest {
   shortDescription: string
   content: string
   category: number
+  userId: string
 }
 
 export interface IUser {
