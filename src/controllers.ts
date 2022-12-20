@@ -7,7 +7,6 @@ export async function RegisterController(
   res: FastifyReply
 ) {
   try {
-
     const isEmailValid = validateEmail(req.body.email)
 
     if (!isEmailValid) {

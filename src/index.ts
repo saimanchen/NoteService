@@ -24,7 +24,6 @@ declare module '@fastify/jwt' {
       "iat": number,
       "exp": number
     }
-
   }
 }
 

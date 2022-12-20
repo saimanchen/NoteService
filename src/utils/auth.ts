@@ -1,13 +1,14 @@
 import fastifyJwt from "@fastify/jwt"; // fastify-plugin
 import { FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
+import environment from "./environment";
 
 async function Auth(server: FastifyInstance, options: FastifyPluginOptions): Promise<void> {
 
   await server.register(fastifyJwt, {
-    secret: "Hello123",
+    secret: environment.JWT_SECRET,
     sign: {
-      expiresIn: "15m"
+      expiresIn: environment.JWT_VALIDITY
      }
   })
 

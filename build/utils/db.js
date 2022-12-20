@@ -16,10 +16,11 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const fastify_plugin_1 = __importDefault(require("fastify-plugin"));
 const Note_1 = __importDefault(require("../model/Note"));
 const User_1 = __importDefault(require("../model/User"));
+const environment_1 = __importDefault(require("./environment"));
 function database(server, options) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            mongoose_1.default.connect("mongodb+srv://saimanchen:saiman123@cluster0.bzp3cg8.mongodb.net/?retryWrites=true&w=majority");
+            mongoose_1.default.connect(environment_1.default.DB_URL);
             mongoose_1.default.connection
                 .on("connected", () => server.log.info({ actor: "MongoDB" }, "Connected!"))
                 .on("disconnected", () => server.log.info({ actor: "MongoDB" }, "Disconnected!"))

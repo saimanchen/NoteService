@@ -4,6 +4,7 @@ import Note from "../model/Note"
 import User from "../model/User"
 import { FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest } from "fastify"
 import { INote, IUser } from "../interfaces"
+import environment from "./environment"
 
 export interface Models {
   User: Model<IUser>
@@ -16,7 +17,7 @@ export interface Db {
 
 async function database(server: FastifyInstance, options: FastifyPluginOptions) {
   try {
-    mongoose.connect("mongodb+srv://saimanchen:saiman123@cluster0.bzp3cg8.mongodb.net/?retryWrites=true&w=majority")
+    mongoose.connect(environment.DB_URL)
 
     mongoose.connection
     .on("connected", () => server.log.info({ actor: "MongoDB" }, "Connected!"))
