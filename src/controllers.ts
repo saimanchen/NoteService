@@ -12,19 +12,30 @@ export async function RegisterController(
 
     if (!isEmailValid) {
       res.status(400).send("Invalid e-mail format")
-      return 
     }
 
     const { User } = req.db.models
 
-    const existsUser =  await User.findOne({ email: req.body.email })
+    const foundUser =  await User.findOne({ email: req.body.email })
 
-    if (existsUser) {
+    if (foundUser) {
       res.status(400).send({ success: false, message: "E-mail address is already in use!" })
     }
 
     const newUser = await User.create(req.body)
-    res.status(201).send({ success: true, message: `Registered new user with userID: ${newUser.id}` })
+
+    const jwtToken = await res.jwtSign({
+      firstname: newUser.firstname,
+      lastname: newUser.lastname,
+      email: newUser.email,
+      userId: newUser.id
+    }, { expiresIn: "60m" })
+
+    res.status(201).send({ 
+      success: true, 
+      message: `Registered new user with userID: ${newUser.id}`, 
+      token: jwtToken 
+    })
 
   } catch (error) {
     req.log.error(error)
@@ -39,25 +50,28 @@ export async function LoginController(
     try {
       const { User } = req.db.models
 
-      const user = await User.findOne({
+      const foundUser = await User.findOne({
         email: req.body.email, 
         password: req.body.password
     }).exec()
 
-      if (!user) {
+      if (!foundUser) {
         res.status(404).send("No user exists with this e-mail address")
       }
 
-      if(user != null) {
+      if(foundUser != null) {
         const jwtToken = await res.jwtSign({
-          firstname: user.firstname,
-          lastname: user.lastname,
-          email: user.email,
-          userId: user.id
-        }, { expiresIn: "15m" })
+          firstname: foundUser.firstname,
+          lastname: foundUser.lastname,
+          email: foundUser.email,
+          userId: foundUser.id
+        }, { expiresIn: "60m" })
 
-        const responseData = { token: jwtToken }
-        res.status(201).send({ success: true, message: responseData })
+        res.status(201).send({ 
+          success: true, 
+          message: "Successfully logged in!", 
+          token: jwtToken 
+        })
       }
     } catch (error) {
       req.log.error(error)
@@ -73,6 +87,10 @@ export async function GetNotesController(
     const { Note } = req.db.models
     const notes = await Note.find({ userId: req.user.userId }).exec()
 
+    if (notes.length === 0) {
+      await res.status(200).send({ success: true, message: "Your notebook is empty!" })
+    }
+
     return notes
   } catch (error) {
     req.log.error(error)
@@ -86,7 +104,7 @@ export async function DeleteAllNotesController(
 ) {
   try {
     const { Note } = req.db.models
-    const { deletedCount } = await Note.deleteMany({})
+    const { deletedCount } = await Note.deleteMany({ userId: req.user.userId })
 
     if(deletedCount === 0) {
       res.code(404)
@@ -110,17 +128,13 @@ export async function AddNoteController(
 
     const { Note, User } = req.db.models
 
-    const foundUser = await User.findOne({ _id: req.body.userId })
+    const foundUser = await User.findOne({ _id: req.user.userId })
 
     if (!foundUser) {
       return await res.status(404).send("User not found!")
     }
 
     const newNote = await Note.create(req.body)
-    
-    // appends noteId to the user's noteIds-array
-    foundUser.noteIds.push(newNote.id)
-    await foundUser.save()
 
     res.status(201)
     return { success: true, message: `uploaded with id: ${newNote.id} and appended it to the array` }
@@ -162,8 +176,12 @@ export async function GetNotesCategoryController(
     const { Note } = req.db.models
     const notes = await Note.find({ 
       category: req.params.category, 
-      userId: req.params.userId 
+      userId: req.user.userId 
     })
+
+    if (notes.length === 0) {
+      return { success: false, message: `There are no notes with the category '${req.params.category}'`}
+    }
 
     return notes
   } catch (error) {
@@ -178,7 +196,8 @@ export async function DeleteNotesCategoryController(
 ) {
   try {
     const { Note } = req.db.models
-    const { category, userId } = req.params
+    const { category } = req.params
+    const { userId } = req.user
 
     const { deletedCount } = await Note.deleteMany({ 
       category: category, 
@@ -190,8 +209,8 @@ export async function DeleteNotesCategoryController(
       return { success: false, message: `There are no notes with the category '${category}' to delete!`}
     }
 
-    res.code(201)
-    return { success: true, message: `All notes with the category '${category}' were deleted!`}
+    res.code(201).send({ success: true, message: `All notes with the category '${category}' were deleted!`})
+    
   } catch (error) {
     req.log.error(error)
     await res.status(500).send("Error occurred when deleting all notes!")
@@ -204,21 +223,25 @@ export async function UpdateNoteController(
 ) {
   try {
     const { Note } = req.db.models
-    const { id, userId } = req.body
+    const { id } = req.body
 
-    await Note.updateOne({ _id: id, userId: userId }, 
-      {
-        title: req.body.title,
-        shortDescription: req.body.shortDescription,
-        content: req.body.content,
-        category: req.body.category
-      }
-    )
+    const foundNote = await Note.findOne({ _id: id, userId: req.user.userId })
 
-    res.code(201)
-    return { success: true, message: `The note with the id '${id}' was updated!`}
+    if(!foundNote) {
+      res.code(404)
+      return { success: false, message: `Note couldn't be found` }
+    }
+
+    await Note.updateOne({ _id: id, userId: req.user.userId }, {
+      title: req.body.title,
+      shortDescription: req.body.shortDescription,
+      content: req.body.content,
+      category: req.body.category
+    })
+
+    res.code(201).send({ success: true, message: `The note with the id '${id}' was updated!` })
   } catch (error) {
     req.log.error(error)
-    await res.status(500).send("Error occurred when deleting all notes!")
+    await res.status(500).send("Error occurred when updating note!")
   }
 }

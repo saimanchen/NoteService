@@ -32,6 +32,7 @@ export async function Routes(server: FastifyInstance, options: FastifyPluginOpti
   server.route({
     method: "DELETE",
     url: "/notes",
+    preHandler: [server.authenticate],
     schema: schemas.DeleteAllNotesSchema,
     handler: controllers.DeleteAllNotesController
   })
@@ -49,6 +50,7 @@ export async function Routes(server: FastifyInstance, options: FastifyPluginOpti
   server.route({
     method: "DELETE",
     url: "/notes/:id",
+    preHandler: [server.authenticate],
     schema: schemas.DeleteNoteSchema,
     handler: controllers.DeleteNoteController
   })
@@ -56,14 +58,16 @@ export async function Routes(server: FastifyInstance, options: FastifyPluginOpti
   // ENDPOINT: /category
   server.route({
     method: "GET",
-    url: "/notes/:category/:userId",
+    url: "/notes/:category",
+    preHandler: [server.authenticate],
     schema: schemas.GetNotesCategorySchema,
     handler: controllers.GetNotesCategoryController
   })
 
   server.route({
     method: "DELETE",
-    url: "/notes/:category/:userId/del",
+    url: "/notes/:category/del",
+    preHandler: [server.authenticate],
     schema: schemas.DeleteNotesCategorySchema,
     handler: controllers.DeleteNotesCategoryController
   })
@@ -71,7 +75,8 @@ export async function Routes(server: FastifyInstance, options: FastifyPluginOpti
   // ENDPOINT: /update
   server.route({
     method: "PUT",
-    url: "/update",
+    url: "/notes",
+    preHandler: [server.authenticate],
     schema: schemas.UpdateNoteSchema,
     handler: controllers.UpdateNoteController
   })

@@ -20,15 +20,24 @@ function RegisterController(req, res) {
             const isEmailValid = (0, validateEmail_js_1.default)(req.body.email);
             if (!isEmailValid) {
                 res.status(400).send("Invalid e-mail format");
-                return;
             }
             const { User } = req.db.models;
-            const existsUser = yield User.findOne({ email: req.body.email });
-            if (existsUser) {
+            const foundUser = yield User.findOne({ email: req.body.email });
+            if (foundUser) {
                 res.status(400).send({ success: false, message: "E-mail address is already in use!" });
             }
             const newUser = yield User.create(req.body);
-            res.status(201).send({ success: true, message: `Registered new user with userID: ${newUser.id}` });
+            const jwtToken = yield res.jwtSign({
+                firstname: newUser.firstname,
+                lastname: newUser.lastname,
+                email: newUser.email,
+                userId: newUser.id
+            }, { expiresIn: "60m" });
+            res.status(201).send({
+                success: true,
+                message: `Registered new user with userID: ${newUser.id}`,
+                token: jwtToken
+            });
         }
         catch (error) {
             req.log.error(error);
@@ -41,22 +50,25 @@ function LoginController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { User } = req.db.models;
-            const user = yield User.findOne({
+            const foundUser = yield User.findOne({
                 email: req.body.email,
                 password: req.body.password
             }).exec();
-            if (!user) {
+            if (!foundUser) {
                 res.status(404).send("No user exists with this e-mail address");
             }
-            if (user != null) {
+            if (foundUser != null) {
                 const jwtToken = yield res.jwtSign({
-                    firstname: user.firstname,
-                    lastname: user.lastname,
-                    email: user.email,
-                    userId: user.id
-                }, { expiresIn: "15m" });
-                const responseData = { token: jwtToken };
-                res.status(201).send({ success: true, message: responseData });
+                    firstname: foundUser.firstname,
+                    lastname: foundUser.lastname,
+                    email: foundUser.email,
+                    userId: foundUser.id
+                }, { expiresIn: "60m" });
+                res.status(201).send({
+                    success: true,
+                    message: "Successfully logged in!",
+                    token: jwtToken
+                });
             }
         }
         catch (error) {
@@ -71,6 +83,9 @@ function GetNotesController(req, res) {
         try {
             const { Note } = req.db.models;
             const notes = yield Note.find({ userId: req.user.userId }).exec();
+            if (notes.length === 0) {
+                yield res.status(200).send({ success: true, message: "Your notebook is empty!" });
+            }
             return notes;
         }
         catch (error) {
@@ -84,7 +99,7 @@ function DeleteAllNotesController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { Note } = req.db.models;
-            const { deletedCount } = yield Note.deleteMany({});
+            const { deletedCount } = yield Note.deleteMany({ userId: req.user.userId });
             if (deletedCount === 0) {
                 res.code(404);
                 return { success: false, message: "There are no notes to delete!" };
@@ -104,14 +119,11 @@ function AddNoteController(req, res) {
         try {
             req.log.info("Request received!");
             const { Note, User } = req.db.models;
-            const foundUser = yield User.findOne({ _id: req.body.userId });
+            const foundUser = yield User.findOne({ _id: req.user.userId });
             if (!foundUser) {
                 return yield res.status(404).send("User not found!");
             }
             const newNote = yield Note.create(req.body);
-            // appends noteId to the user's noteIds-array
-            foundUser.noteIds.push(newNote.id);
-            yield foundUser.save();
             res.status(201);
             return { success: true, message: `uploaded with id: ${newNote.id} and appended it to the array` };
         }
@@ -148,8 +160,11 @@ function GetNotesCategoryController(req, res) {
             const { Note } = req.db.models;
             const notes = yield Note.find({
                 category: req.params.category,
-                userId: req.params.userId
+                userId: req.user.userId
             });
+            if (notes.length === 0) {
+                return { success: false, message: `There are no notes with the category '${req.params.category}'` };
+            }
             return notes;
         }
         catch (error) {
@@ -163,7 +178,8 @@ function DeleteNotesCategoryController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { Note } = req.db.models;
-            const { category, userId } = req.params;
+            const { category } = req.params;
+            const { userId } = req.user;
             const { deletedCount } = yield Note.deleteMany({
                 category: category,
                 userId: userId
@@ -172,8 +188,7 @@ function DeleteNotesCategoryController(req, res) {
                 res.code(404);
                 return { success: false, message: `There are no notes with the category '${category}' to delete!` };
             }
-            res.code(201);
-            return { success: true, message: `All notes with the category '${category}' were deleted!` };
+            res.code(201).send({ success: true, message: `All notes with the category '${category}' were deleted!` });
         }
         catch (error) {
             req.log.error(error);
@@ -186,19 +201,23 @@ function UpdateNoteController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { Note } = req.db.models;
-            const { id, userId } = req.body;
-            yield Note.updateOne({ _id: id, userId: userId }, {
+            const { id } = req.body;
+            const foundNote = yield Note.findOne({ _id: id, userId: req.user.userId });
+            if (!foundNote) {
+                res.code(404);
+                return { success: false, message: `Note couldn't be found` };
+            }
+            yield Note.updateOne({ _id: id, userId: req.user.userId }, {
                 title: req.body.title,
                 shortDescription: req.body.shortDescription,
                 content: req.body.content,
                 category: req.body.category
             });
-            res.code(201);
-            return { success: true, message: `The note with the id '${id}' was updated!` };
+            res.code(201).send({ success: true, message: `The note with the id '${id}' was updated!` });
         }
         catch (error) {
             req.log.error(error);
-            yield res.status(500).send("Error occurred when deleting all notes!");
+            yield res.status(500).send("Error occurred when updating note!");
         }
     });
 }

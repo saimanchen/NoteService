@@ -19,7 +19,8 @@ exports.RegisterSchema = {
             type: "object",
             properties: {
                 success: { type: "boolean" },
-                message: { type: "string" }
+                message: { type: "string" },
+                token: { type: "string" }
             }
         }
     }
@@ -39,22 +40,13 @@ exports.LoginSchema = {
             type: "object",
             properties: {
                 success: { type: "boolean" },
-                message: {
-                    type: "object",
-                    properties: {
-                        token: { type: "string" }
-                    }
-                }
+                message: { type: "string" },
+                token: { type: "string" }
             }
         }
     }
 };
 exports.GetNotesSchema = {
-    params: {
-        type: 'object',
-        additionalProperties: false,
-        properties: { userId: { type: 'string' } }
-    },
     response: {
         201: {
             description: "List of all notes",
@@ -88,13 +80,13 @@ exports.DeleteAllNotesSchema = {
 exports.AddNoteSchema = {
     body: {
         type: "object",
-        required: ["title", "shortDescription", "content", "category", "userId"],
+        required: ["title", "shortDescription", "content", "category"],
         properties: {
             title: { description: "Title of the note", type: "string" },
             shortDescription: { description: "Short description of the note", type: "string" },
             content: { description: "Content of the note", type: "string" },
             category: { description: "Category of the note", type: "number" },
-            userId: { description: "ID of the user which the note belongs to", type: "string" }
+            userId: { description: "User Id of which the note belongs to", type: "string" }
         }
     },
     response: {
@@ -130,8 +122,7 @@ exports.GetNotesCategorySchema = {
         type: 'object',
         additionalProperties: false,
         properties: {
-            category: { type: "number" },
-            userId: { type: "string" }
+            category: { type: "number" }
         }
     },
     response: {
@@ -157,8 +148,7 @@ exports.DeleteNotesCategorySchema = {
         type: 'object',
         additionalProperties: false,
         properties: {
-            category: { type: 'number' },
-            userId: { type: 'string' }
+            category: { type: 'number' }
         }
     },
     response: {
@@ -181,8 +171,7 @@ exports.UpdateNoteSchema = {
             title: { description: "title of the note to update", type: "string" },
             shortDescription: { description: "short description of the note to update", type: "string" },
             content: { description: "content of the note to update", type: "string" },
-            category: { description: "category of the note to update", type: "number" },
-            userId: { description: "" }
+            category: { description: "category of the note to update", type: "number" }
         }
     },
     response: {
