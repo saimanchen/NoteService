@@ -4,13 +4,12 @@ exports.UpdateNoteSchema = exports.DeleteNotesCategorySchema = exports.GetNotesC
 exports.RegisterSchema = {
     body: {
         type: "object",
-        required: ["firstname", "lastname", "email", "password", "noteIds"],
+        required: ["firstname", "lastname", "email", "password"],
         properties: {
             firstname: { description: "Firstname of the user", type: "string" },
             lastname: { description: "Lastname of the user", type: "string" },
             email: { description: "E-mail of the user", type: "string" },
             password: { description: "Password of the user", type: "string" },
-            noteIds: { description: "List of note IDs of the user", type: "array" }
         }
     },
     response: {
