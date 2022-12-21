@@ -5,8 +5,7 @@ const NoteSchema = new Schema({
   title: { type: String, required: true },
   shortDescription: { type: String, required: true },
   content: { type: String, required: true },
-  category: { type: Number, required: true },
-  userId: { type: String, required: true }
+  category: { type: Number, required: true }
 }, { timestamps: true })
 
 const Note = model<INote>("Note", NoteSchema)

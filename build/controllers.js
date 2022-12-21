@@ -138,7 +138,7 @@ function DeleteNoteController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { Note } = req.db.models;
-            const { deletedCount } = yield Note.deleteOne({ _id: req.params.id });
+            const { deletedCount } = yield Note.deleteOne({ _id: req.params.id, userId: req.user.userId });
             console.log(deletedCount);
             if (deletedCount === 0) {
                 res.code(404);

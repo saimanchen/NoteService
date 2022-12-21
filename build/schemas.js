@@ -84,8 +84,7 @@ exports.AddNoteSchema = {
             title: { description: "Title of the note", type: "string" },
             shortDescription: { description: "Short description of the note", type: "string" },
             content: { description: "Content of the note", type: "string" },
-            category: { description: "Category of the note", type: "number" },
-            userId: { description: "User Id of which the note belongs to", type: "string" }
+            category: { description: "Category of the note", type: "number" }
         }
     },
     response: {

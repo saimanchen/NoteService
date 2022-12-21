@@ -150,7 +150,7 @@ export async function DeleteNoteController(
 ) {
   try {
     const { Note } = req.db.models
-    const { deletedCount } = await Note.deleteOne({ _id: req.params.id })
+    const { deletedCount } = await Note.deleteOne({ _id: req.params.id, userId: req.user.userId })
 
     console.log(deletedCount)
     
