@@ -15,6 +15,7 @@ export interface IAddNoteRequest {
   shortDescription: string
   content: string
   category: number
+  userId: string
 }
 
 export interface IDeleteNoteRequest {

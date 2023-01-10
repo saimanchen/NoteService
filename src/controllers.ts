@@ -85,6 +85,7 @@ export async function GetNotesController(
   try {
     const { Note } = req.db.models
     const notes = await Note.find({ userId: req.user.userId }).exec()
+    // const notes = await Note.find({}).exec()
 
     if (notes.length === 0) {
       await res.status(200).send({ success: true, message: "Your notebook is empty!" })
@@ -133,7 +134,13 @@ export async function AddNoteController(
       return await res.status(404).send("User not found!")
     }
 
-    const newNote = await Note.create(req.body)
+    const newNote = await Note.create({
+      userId: req.user.userId,
+      title: req.body.title,
+      shortDescription: req.body.shortDescription,
+      content: req.body.content,
+      category: req.body.category
+    })
 
     res.status(201)
     return { success: true, message: `uploaded with id: ${newNote.id} and appended it to the array` }
